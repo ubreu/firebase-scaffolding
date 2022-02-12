@@ -57,7 +57,10 @@ npm i @angular/fire
 
 ### 6. Add a Firebase function
 
-Init firebase functions
+Before enabling functions you have to upgrade your billing plan to "Blaze" (pay as you go).
+Go to the firebase console, select the gear icon and select "Usage and billing". Upgrade to pay as you go.
+
+Init firebase functions:
 
 ````sh
 firebase init functions
@@ -107,6 +110,14 @@ Add the firebase function call:
 ````
 
 ### 7. Setup Github Edit github action
+
+Create a token to use for the Github action and add it as a secret to Github:
+
+````sh
+firebase login:ci
+````
+
+Create/modify the github workflow as follows:
 
 ````yml
 name: Deploy to Firebase Hosting on merge
