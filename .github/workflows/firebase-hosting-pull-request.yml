@@ -9,9 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: npm ci && npm run build
-      - uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SCAFFOLDING_4C7FC }}'
-          projectId: scaffolding-4c7fc
+      - name: build frontend
+        run: npm ci && npm run build
+        working-directory: frontend
+      - name: build function
+        run: npm ci && npm run build
+        working-directory: functions
