@@ -69,6 +69,8 @@ firebase init functions
 Add AngularFireModule and AngularFireFunctionsModule to app.module.ts:
 
 ````ts
+    import { AngularFireFunctionsModule, USE_EMULATOR as USE_FUNCTIONS_EMULATOR } from '@angular/fire/compat/functions';
+    ...
     imports: [
       AngularFireModule.initializeApp(environment.firebase),
       AngularFireFunctionsModule,
@@ -109,7 +111,64 @@ Add the firebase function call:
   }
 ````
 
-### 7. Setup Github Edit github action
+### 7. Add authentication
+
+We want to ensure that only authenticated users can access the Firestore database, thus we add the minimal firebase auth hooks:
+
+````ts
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import firebase from 'firebase/compat/app';
+
+export class AppComponent {
+  constructor(public auth: AngularFireAuth) {
+  }
+
+  login() {
+    this.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+  }
+  
+  logout() {
+    this.auth.signOut();
+  }
+}
+````
+
+The minimal HTML fragment:
+````html
+    <div *ngIf="auth.user | async as user; else showLogin">
+      <h1>Hello {{ user.displayName }}!</h1>
+      ...
+      <button (click)="logout()">Logout</button>
+    </div>
+    <ng-template #showLogin>
+      <p>Please login.</p>
+      <button (click)="login()">Login with Google</button>
+    </ng-template>
+````
+
+Add AngularFireAuthModule to app.module.ts:
+
+````ts
+    import { AngularFireAuthModule, USE_EMULATOR as USE_AUTH_EMULATOR } from '@angular/fire/compat/auth';
+    ...
+    imports: [
+      AngularFireModule.initializeApp(environment.firebase),
+      AngularFireFunctionsModule,
+    ...
+    providers: [
+      { provide: USE_AUTH_EMULATOR, useValue: environment.useEmulators ? ['localhost', 9099] : undefined },
+    ],
+````
+
+Launch the emulator setup wizard and ensure the authentication and firestore emulators are enabled:
+
+````sh
+firebase init functions
+
+# launch the emulators
+firebase emulators:start
+````
+### 8. Setup Github Action for deployment
 
 Create a token to use for the Github action and add it as a secret to Github:
 
@@ -151,6 +210,8 @@ jobs:
 ### Development Angular application
 
 In the `frontend` directory, run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+
+To launch the emulator for the firebase services run: `firebase emulators:start` in the top-level directory.
 
 ### Development Firebase function
 

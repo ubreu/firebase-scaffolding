@@ -1,1 +1,10 @@
-<app-function-view></app-function-view>
+<div *ngIf="auth.user | async as user; else showLogin">
+  <h1>Hello {{ user.displayName }}!</h1>
+  <app-function-view></app-function-view>
+  <button (click)="logout()">Logout</button>
+</div>
+
+<ng-template #showLogin>
+  <p>Please login.</p>
+  <button (click)="login()">Login with Google</button>
+</ng-template>
