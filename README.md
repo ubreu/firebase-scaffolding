@@ -134,6 +134,7 @@ export class AppComponent {
 ````
 
 The minimal HTML fragment:
+
 ````html
     <div *ngIf="auth.user | async as user; else showLogin">
       <h1>Hello {{ user.displayName }}!</h1>
@@ -168,7 +169,60 @@ firebase init functions
 # launch the emulators
 firebase emulators:start
 ````
-### 8. Setup Github Action for deployment
+
+Go to the Auth emulator view (default http://localhost:4000/auth, see console for exact URL) to manage user accounts.
+
+### 8. Add Firestore persistence
+
+Add AngularFirestoreModule to app.module.ts:
+
+````ts
+    import { AngularFirestoreModule, USE_EMULATOR as USE_FIRESTORE_EMULATOR } from '@angular/fire/compat/firestore';
+    ...
+    imports: [
+      AngularFireModule.initializeApp(environment.firebase),
+      AngularFireFunctionsModule,
+    ...
+    providers: [
+      { provide: USE_FIRESTORE_EMULATOR, useValue: environment.useEmulators ? ['localhost', 8080] : undefined },
+    ],
+````
+
+Add a new component to list the documents in a collection:
+
+````ts
+export class CollectionViewComponent implements OnInit {
+
+  private itemsCollection: AngularFirestoreCollection<Item>
+  items: Observable<Item[]>
+
+  constructor(private afs: AngularFirestore) {
+    this.itemsCollection = afs.collection<Item>('items');
+    this.items = this.itemsCollection.valueChanges();
+  }
+
+  addItem(item: Item) {
+    this.itemsCollection.add(item);
+  }
+}
+````
+
+The minimal HTML fragment:
+
+````html
+<ul>
+  <li *ngFor="let item of items | async">
+    {{ item.name }}
+  </li>
+</ul>
+````
+
+Go to the Firestore emulator view (default http://localhost:4000/firestore, see console for exact URL) to manage documents. You can also manage the collection in Firestore emulator via REST API:
+
+````sh
+curl -v -X DELETE "http://localhost:8080/v1/projects/<firebase-project-id>/databases/(default)/documents"
+````
+### 9. Setup Github Action for deployment
 
 Create a token to use for the Github action and add it as a secret to Github:
 

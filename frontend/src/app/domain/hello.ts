@@ -1,3 +1,7 @@
 export interface Hello {
-    title: string
+  title: string
+}
+
+export interface Item {
+  name: string
 }
