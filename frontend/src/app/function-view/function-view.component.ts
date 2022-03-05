@@ -16,7 +16,7 @@ export class FunctionViewComponent implements OnInit {
   constructor(private service: FunctionService) { }
 
   ngOnInit(): void {
-    this.message$ = this.service.get("John").pipe(
+    this.message$ = this.service.get("Ping").pipe(
       retry(1),
       catchError(e => of({ title: "Fallback in case of error" }))
     )

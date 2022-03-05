@@ -17,7 +17,7 @@ export const sayHello = functions.https.onRequest((request, response) => {
         response.status(200).send({
           "status": "success",
           "data": {
-            "title": `Hi ${receivedValue}, (running in emulator/debug mode)!`,
+            "title": `Function says hi! Got: ${receivedValue}, (running in emulator/debug mode)!`,
           },
         })
       }), delay)
@@ -25,7 +25,7 @@ export const sayHello = functions.https.onRequest((request, response) => {
       response.status(200).send({
         "status": "success",
         "data": {
-          "title": `Hi ${receivedValue}, (running in prod mode)!`,
+          "title": `Function says hi! Got: ${receivedValue}, (running in prod mode)!`,
         },
       })
     }
